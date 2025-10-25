@@ -1,0 +1,46 @@
+services:
+  frontend:
+    build: 
+      context: ./frontend/my-app
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  recommendation:
+    build:
+      context: ./recommendation-service
+      dockerfile: dockerfile
+
+  chatbot:
+    build:
+      context: ./chatbot-service
+      dockerfile: dockerfile
+    ports:
+      - "8001:8001"
+
+  backend:
+    build: 
+      context: ./backend-service
+      dockerfile: dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=password
+      - MYSQL_DB=rental_data
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=rental_data
+    healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    volumes:
+      - ./rental_data.sql:/docker-entrypoint-initdb.d/rentals_db_init.sql

@@ -1,0 +1,9 @@
+fastapi[standard]
+pydantic
+langchain
+langchain-google-genai
+langgraph
+langgraph-checkpoint-redis
+# langchain-community
+geopy
+requests
